@@ -9,7 +9,7 @@ function App() {
     useEffect(() => {
         const url = `${API_BASE_URL}/fruit/list`;
 
-        axios
+        axios     
             .get(url, {})
             .then((response) => {
                 //console.log(response.data);
