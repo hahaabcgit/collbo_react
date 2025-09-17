@@ -1,21 +1,26 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { Table } from "react-bootstrap";
+import { API_BASE_URL } from "../config/config";
 
-function App(){
-    const [fruitList, setFruitList] = useState() ; //넘어온 과일 목록
+function App() {
+    const [fruitList, setFruitList] = useState([]); // 넘어온 과일 목록
+
     useEffect(() => {
-        const url = `${ARI_BASE_URL}/fruit/list`;
+        const url = `${API_BASE_URL}/fruit/list`;
 
-        axios
-        .get(url, {})
-        .then((response) => {
-            //console.log(response.data);
-            setFruitList(response.data);
-        });
-    },  []);
-    return(
+        axios     
+            .get(url, {})
+            .then((response) => {
+                //console.log(response.data);
+                setFruitList(response.data);
+            });
+
+    }, []);
+
+    return (
         <>
-            <Table hover style={{margin: '5px'}}>
+            <Table hover style={{ margin: '5px' }}>
                 <thead>
                     <tr>
                         <th>아이디</th>
@@ -24,15 +29,15 @@ function App(){
                     </tr>
                 </thead>
                 <tbody>
-                    {fruitList.map((fruit) => 
-                    <tr key ={fruit.id}>
-                        <td>{fruit.id}</td>
-                        <td>{fruit.name}</td>
-                        <td>{Number(fruit.price).toLocaleString} 원</td>
-                    </tr>
+                    {fruitList.map((fruit) =>
+                        <tr key={fruit.id}>
+                            <td>{fruit.id}</td>
+                            <td>{fruit.name}</td>
+                            <td>{Number(fruit.price).toLocaleString()} 원</td>
+                        </tr>
                     )}
                 </tbody>
-            </Table>
+            </Table >
         </>
     );
 }
