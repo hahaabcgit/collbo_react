@@ -26,8 +26,8 @@ function App() {
 
 
     const SignupAction = async (event) => {
-            event.preventDefault(); //이벤트 전파 방지
-        try { 
+        event.preventDefault(); //이벤트 전파 방지
+        try {
             const url = `${API_BASE_URL}/member/signup`;
             const parameters = { name, email, password, address };
 
@@ -135,13 +135,11 @@ function App() {
                                 회원 가입
                             </Button>
 
-                        </Form>
-                    </Card.body>
-                </Card>
 
-
-            </col>
-        </Row>
+                        </Card.body>
+                    </Card>
+                </col>
+            </Row>
         </Container >
     );
 }
