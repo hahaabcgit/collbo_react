@@ -4,16 +4,16 @@ import { Table } from "react-bootstrap";
 import { API_BASE_URL } from "../config/config";
 
 function App() {
-    const [fruitList, setFruitList] = useState([]); // 넘어온 과일 목록
+    const [elementList, setElementList] = useState([]);
 
     useEffect(() => {
-        const url = `${API_BASE_URL}/fruit/list`;
+        const url = `${API_BASE_URL}/element/list`;
 
         axios
             .get(url, {})
             .then((response) => {
                 //console.log(response.data);
-                setFruitList(response.data);
+                setElementList(response.data);
             });
 
     }, []);
@@ -26,14 +26,18 @@ function App() {
                         <th>아이디</th>
                         <th>상품명</th>
                         <th>단가</th>
+                        <th>카테고리</th>
+                        <th>세부 설명</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {fruitList.map((fruit) =>
-                        <tr key={fruit.id}>
-                            <td>{fruit.id}</td>
-                            <td>{fruit.name}</td>
-                            <td>{Number(fruit.price).toLocaleString()} 원</td>
+                    {elementList.map((element) =>
+                        <tr key={element.id}>
+                            <td>{element.id}</td>
+                            <td>{element.name}</td>
+                            <td>{Number(element.price).toLocaleString()} 원</td>
+                            <td>{element.category}</td>
+                            <td>{element.description}</td>
                         </tr>
                     )}
                 </tbody>
