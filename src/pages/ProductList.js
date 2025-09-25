@@ -1,8 +1,11 @@
+import axios from "axios";
+
 import { useEffect, useState } from "react";
 import { Button, Card, Col, Container, Row } from "react-bootstrap";
+import { Link, useNavigate } from "react-router-dom";
+
 import { API_BASE_URL } from "../config/config";
-import { Await, Link, Navigate, useNavigate } from "react-router-dom";
-import axios from "axios";
+
 
 /*
 step 01
@@ -15,8 +18,6 @@ step 02
 삭제 버튼에 대한 기능 구현
 */
 function App({ user }) {
-    console.log(user);
-
     // 스프링에서 넘겨 받은 상품 목록 state
     const [products, setProducts] = useState([]);
 
@@ -39,7 +40,7 @@ function App({ user }) {
 
     const navigate = useNavigate();
 
-    //이 함수는 관리자 모드일 때 보여 주는 '수정'과 '삭제'를 위한 버튼을 생성해주는 함수입니다.
+    // 이 함수는 관리자 모드일때 보여 주는 `수정`과 `삭제`를 위한 버튼을 생성해주는 함수입니다.
     const makeAdminButtons = (item, user, navigate) => {
         if (user?.role !== 'ADMIN') return null;
 
@@ -51,7 +52,7 @@ function App({ user }) {
                     size="sm"
                     onClick={(event) => {
                         event.stopPropagation();
-                        alert('수정');
+                        navigate(`/product/update/${item.id}`);
                     }}
                 >
                     수정
@@ -61,7 +62,7 @@ function App({ user }) {
                     variant="danger"
                     className="mb-2"
                     size="sm"
-                    onClick={(event) => {
+                    onClick={async (event) => {
                         event.stopPropagation();
 
                         const isDelete = window.confirm(`'${item.name}' 상품을 삭제하시겠습니까?`);
@@ -69,19 +70,20 @@ function App({ user }) {
                         if (isDelete === false) {
                             alert(`'${item.name}' 상품 삭제를 취소하셨습니다.`);
                             return;
-
                         }
-                        try { //상품을 삭제 후 다시 상품 목록 페이지를 보여 줍니다.
+
+                        try { // 상품을 삭제 후 다시 상품 목록 페이지를 보여 줍니다.
                             // 주의) 상품을 삭제하려면 반드시 primary key인 상품의 아이디를 넘겨 주어야 합니다.
-                            await axios.delete(`${API_BASE_URL}/product/delete${item.id}`)
-                            
-                            //alert 함수(modal 통신)와 비동기 통신 사용시, 화면 갱신에 유의하도록 합니다.
+                            await axios.delete(`${API_BASE_URL}/product/delete/${item.id}`);
+
+                            // alert 함수(modal 통신)와 비동기 통신 사용시, 화면 갱신에 유의하도록 합니다.
                             alert(`'${item.name}' 상품이 삭제 되었습니다.`);
-                           
-                            //삭제된 id를 배제하고, 상품 목록 state를 다시 갱신합니다.
-                            setProducts(prev => prev.filter(p => p.id !== item.id)); //state 갱신
-                            
-                            navigate(`/product/list`);
+
+                            // 삭제된 id를 배제하고, 상품 목록 state를 다시 갱신합니다.
+                            setProducts(prev => prev.filter(p => p.id !== item.id));
+
+                            navigate('/product/list');
+
                         } catch (error) {
                             console.log(error);
                             alert(`상품 삭제 실패 : ${error.response?.data || error.message}`);
@@ -90,8 +92,6 @@ function App({ user }) {
                 >
                     삭제
                 </Button>
-
-
             </div>
         );
     };
@@ -99,10 +99,10 @@ function App({ user }) {
     return (
         <Container className="my-4">
             <h1 className="my-4">상품 목록 페이지</h1>
-            <Link to={'/product/insert'}>
+            <Link to={`/product/insert`}>
                 {user?.role === 'ADMIN' && (
                     <Button variant="primary" className="mb-3">
-                        상품등록
+                        상품 등록
                     </Button>
                 )}
             </Link>
@@ -122,30 +122,26 @@ function App({ user }) {
                                 style={{ width: '100%', height: '200px' }}
                             />
                             <Card.Body>
-                                {/* borderCollapse : 각 셀의 테두리를 합칠 것인지, 별개로 보여 줄지를 설정하는 속성*/}
+                                {/* borderCollapse : 각 셀의 테두리를 합칠 것인지, 별개로 보여 줄지를 설정하는 속성 */}
                                 <table style={{ width: '100%', borderCollapse: 'collapse', border: 'none' }}>
                                     <tbody>
                                         <tr>
-                                            <td style={{ width: '70%', padding: '4px', border: 'none' }}>
+                                            <td style={{ width: '70%', padding: '4px', border: 'none' }} >
                                                 <Card.Title>{item.name}({item.id})</Card.Title>
                                             </td>
-                                            {/* textAlign : 수평 정렬 방식, verticalAlign : 수직정렬 방식 지정 */}
-                                            {/* rowSapn 속성은 행방향으로 병합시사용 ↔ colSpan */}
-                                            <td rowSpan={2} style={{ padding: '4px', border: 'none', textAlign: 'center', verticalAlign: 'middle' }}>
-                                                {makeAdminButtons(item, user, Navigate)}
+                                            {/*  textAlign: 수평 정렬 방식, verticalAlign: 수직 정렬 방식 지정 */}
+                                            {/* rowSpan 속성은 행방향으로 병합시 사용 ↔ colSpan  */}
+                                            <td rowSpan={2} style={{ padding: '4px', border: 'none', textAlign: 'center', verticalAlign: 'middle' }} >
+                                                {makeAdminButtons(item, user, navigate)}
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td style={{ width: '70%', padding: '4px', border: 'none' }}>
+                                            <td style={{ width: '70%', padding: '4px', border: 'none' }} >
                                                 <Card.Text>가격 : {item.price.toLocaleString()} 원</Card.Text>
-
                                             </td>
-
                                         </tr>
                                     </tbody>
                                 </table>
-
-
                             </Card.Body>
                         </Card>
                     </Col>
